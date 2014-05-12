@@ -35,4 +35,22 @@ public class BinarySearchTest {
         assertEquals(-6, search(0, array, 5, 0));
     }
 
+    @Test
+    public void testBoundaryValues() {
+        {
+            final int[] array = {Integer.MIN_VALUE, Integer.MAX_VALUE};
+            assertEquals(0, search(Integer.MIN_VALUE, array));
+            assertEquals(-2, search(0, array));
+            assertEquals(1, search(Integer.MAX_VALUE, array));
+        }
+
+        {
+            final int[] array = {-2147483648, -1073741823, 1073741823, 2147483647};
+            assertEquals(0, search(-2147483648, array));
+            assertEquals(1, search(-1073741823, array));
+            assertEquals(2, search(1073741823, array));
+            assertEquals(3, search(2147483647, array));
+        }
+    }
+
 }

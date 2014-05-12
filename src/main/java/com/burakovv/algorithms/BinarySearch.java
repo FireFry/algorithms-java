@@ -11,10 +11,10 @@ public class BinarySearch {
         int right = offset + size - 1;
         while (left <= right) {
             int middle = (left + right) / 2;
-            int compareResult = element - array[middle];
-            if (compareResult == 0) {
+            int middleValue = array[middle];
+            if (element == middleValue) {
                 return middle;
-            } else if (compareResult < 0) {
+            } else if (element < middleValue) {
                 right = middle - 1;
             } else {
                 left = middle + 1;
