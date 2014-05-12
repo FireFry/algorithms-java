@@ -1,21 +1,19 @@
 package com.burakovv.algorithms;
 
+import com.burakovv.data.ComparableData;
+
 public class InsertionSort {
 
-    public static void sort(int a[]) {
-        sort(a, 0, a.length);
-    }
-
-    public static void sort(int a[], int offset, int size) {
+    public static void sort(ComparableData data) {
+        int offset = data.getOffset();
+        int size = data.getSize();
         for (int i = offset + 1, limit = offset + size; i < limit; i++) {
-            int k = a[i];
             int j = i - 1;
-            while (j >= offset && a[j] > k) {
-                a[j + 1] = k;
+            while (j >= offset && data.compare(j, j + 1) > 0) {
+                data.swap(j, j + 1);
                 j--;
             }
-            a[j + 1] = k;
         }
-    }
 
+    }
 }

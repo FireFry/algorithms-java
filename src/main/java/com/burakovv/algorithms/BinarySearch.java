@@ -1,20 +1,21 @@
 package com.burakovv.algorithms;
 
+import com.burakovv.data.ComparableData;
+
 public class BinarySearch {
 
-    public static int search(int element, int[] array) {
-        return search(element, array, 0, array.length);
-    }
-
-    public static int search(int element, int[] array, int offset, int size) {
-        int left = offset;
-        int right = offset + size - 1;
+    /**
+     * Searching key should be the first buffer element
+     */
+    public static int search(ComparableData data) {
+        int left = data.getOffset();
+        int right = left + data.getSize() - 1;
         while (left <= right) {
             int middle = (left + right) / 2;
-            int middleValue = array[middle];
-            if (element == middleValue) {
+            int compareResult = data.compare(data.getBufferOffset(), middle);
+            if (compareResult == 0) {
                 return middle;
-            } else if (element < middleValue) {
+            } else if (compareResult < 0) {
                 right = middle - 1;
             } else {
                 left = middle + 1;

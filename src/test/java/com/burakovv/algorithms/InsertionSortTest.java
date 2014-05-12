@@ -1,8 +1,10 @@
 package com.burakovv.algorithms;
 
+import com.burakovv.data.ComparableData;
+
 public class InsertionSortTest extends AbstractSearchTest {
     @Override
-    void sort(int[] a, int offset, int size) {
-        InsertionSort.sort(a, offset, size);
+    protected void sort(ComparableData comparableData) {
+        InsertionSort.sort(comparableData);
     }
 }

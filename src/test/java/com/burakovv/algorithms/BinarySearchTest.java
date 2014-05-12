@@ -1,24 +1,36 @@
 package com.burakovv.algorithms;
 
+import com.burakovv.data.impl.IntArrayDataWrapper;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-import static com.burakovv.algorithms.BinarySearch.*;
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
 
 public class BinarySearchTest {
 
     @Test
     public void testSearch() throws Exception {
-        final int[] array = {1, 3, 5, 7};
-        assertEquals(-1, search(0, array));
-        assertEquals(0, search(1, array));
-        assertEquals(-2, search(2, array));
-        assertEquals(1, search(3, array));
-        assertEquals(-3, search(4, array));
-        assertEquals(2, search(5, array));
-        assertEquals(-4, search(6, array));
-        assertEquals(3, search(7, array));
-        assertEquals(-5, search(8, array));
+        final int[] data = new int[]{1, 3, 5, 7};
+        assertEquals(-1, search(0, data));
+        assertEquals(0, search(1, data));
+        assertEquals(-2, search(2, data));
+        assertEquals(1, search(3, data));
+        assertEquals(-3, search(4, data));
+        assertEquals(2, search(5, data));
+        assertEquals(-4, search(6, data));
+        assertEquals(3, search(7, data));
+        assertEquals(-5, search(8, data));
+    }
+
+    private int search(int key, int[] data) {
+        return search(key, data, 0, data.length);
+    }
+
+    private int search(int key, int[] data, int offset, int size) {
+        IntArrayDataWrapper intArrayDataWrapper = new IntArrayDataWrapper(Arrays.copyOf(data, data.length + 1), offset, size, size, 1);
+        intArrayDataWrapper.set(intArrayDataWrapper.getBufferOffset(), key);
+        return BinarySearch.search(intArrayDataWrapper);
     }
 
     @Test

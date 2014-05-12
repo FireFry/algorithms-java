@@ -1,5 +1,7 @@
 package com.burakovv.algorithms;
 
+import com.burakovv.data.ComparableData;
+import com.burakovv.data.impl.IntArrayDataWrapper;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -11,8 +13,7 @@ public abstract class AbstractSearchTest {
 
     @Test
     public void testEmptyArray() {
-        final int[] array = new int[0];
-        sort(array);
+        assertSortSucceeded(new int[0]);
     }
 
     @Test
@@ -50,10 +51,15 @@ public abstract class AbstractSearchTest {
     }
 
     private void assertSortSucceeded(int[] array) {
-        int[] copy = Arrays.copyOf(array, array.length);
-        sort(array);
-        assertSorted(array);
-        assertEqualsIgnoringOrder(copy, array);
+        int requiredBufferSize = getRequiredBufferSize();
+        int[] copy = Arrays.copyOf(array, array.length + requiredBufferSize);
+        sort(new IntArrayDataWrapper(copy, 0, copy.length, copy.length, requiredBufferSize));
+        assertSorted(copy);
+        assertEqualsIgnoringOrder(array, copy);
+    }
+
+    protected int getRequiredBufferSize() {
+        return 0;
     }
 
     private void assertEqualsIgnoringOrder(int[] a, int[] b) {
@@ -74,10 +80,6 @@ public abstract class AbstractSearchTest {
         }
     }
 
-    abstract void sort(int[] a, int offset, int size);
-
-    protected void sort(int[] a) {
-        sort(a, 0, a.length);
-    }
+    protected abstract void sort(ComparableData comparableData);
 
 }
