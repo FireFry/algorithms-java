@@ -5,7 +5,7 @@ Algorithms, writen in Java.
 
 TODO list:
 
-1. Binary search
+1. ~~Binary search~~
 2. Order statistic
 3. Insertion sort
 4. Heap sort
