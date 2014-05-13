@@ -9,8 +9,8 @@ TODO list:
 2. Order statistic
 3. ~~Insertion sort~~
 4. ~~Heap sort~~
-5. Quick sort
-6. Radix sort
+5. ~~Quick sort~~
+6. ~~Radix sort~~
 7. Hash table
 8. Binary search tree
 9. Red-black tree
