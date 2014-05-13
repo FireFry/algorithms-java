@@ -66,22 +66,25 @@ public abstract class AbstractSearchTest {
     }
 
     private void assertSortSucceeded(int[] array) {
-        int requiredBufferSize = getRequiredBufferSize();
+        preprocessArray(array);
+        int requiredBufferSize = getRequiredBufferSize(array.length);
         int[] copy = Arrays.copyOf(array, array.length + requiredBufferSize);
-        IntArrayDataWrapper data = new IntArrayDataWrapper(copy, 0, copy.length, copy.length, requiredBufferSize);
+        IntArrayDataWrapper data = new IntArrayDataWrapper(copy, 0, array.length, array.length, requiredBufferSize);
         long startedAt = System.currentTimeMillis();
         sort(data);
         long endAt = System.currentTimeMillis();
         updateMaxTime(endAt - startedAt);
-        assertSorted(copy);
+        assertSorted(copy, array.length);
         assertEquals(array, copy);
     }
+
+    protected void preprocessArray(int[] array) {}
 
     private void updateMaxTime(long delay) {
         maxTime = Math.max(maxTime, delay);
     }
 
-    protected int getRequiredBufferSize() {
+    protected int getRequiredBufferSize(int length) {
         return 0;
     }
 
@@ -92,8 +95,8 @@ public abstract class AbstractSearchTest {
         }
     }
 
-    private void assertSorted(int[] array) {
-        for (int i = 1; i < array.length; i++) {
+    private void assertSorted(int[] array, int length) {
+        for (int i = 1; i < length; i++) {
             assertTrue(array[i] >= array[i - 1]);
         }
     }

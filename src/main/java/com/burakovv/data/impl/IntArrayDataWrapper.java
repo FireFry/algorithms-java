@@ -1,8 +1,8 @@
 package com.burakovv.data.impl;
 
-import com.burakovv.data.ComparableData;
+import com.burakovv.data.NumberData;
 
-public class IntArrayDataWrapper implements ComparableData {
+public class IntArrayDataWrapper implements NumberData {
     private final int[] data;
     private final int offset;
     private final int size;
@@ -51,5 +51,10 @@ public class IntArrayDataWrapper implements ComparableData {
 
     public void set(int index, int value) {
         data[index] = value;
+    }
+
+    @Override
+    public long getNumber(int index) {
+        return data[index];
     }
 }
