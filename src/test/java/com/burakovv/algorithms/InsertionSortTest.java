@@ -7,4 +7,9 @@ public class InsertionSortTest extends AbstractSearchTest {
     protected void sort(ComparableData comparableData) {
         InsertionSort.sort(comparableData);
     }
+
+    @Override
+    protected boolean isFast() {
+        return false;
+    }
 }

@@ -2,14 +2,24 @@ package com.burakovv.algorithms;
 
 import com.burakovv.data.ComparableData;
 import com.burakovv.data.impl.IntArrayDataWrapper;
+import org.junit.After;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Random;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractSearchTest {
+
+    protected static volatile long maxTime = 0;
+
+    @After
+    public void tearDown() {
+        System.out.println("Max sorting time: " + maxTime);
+
+    }
 
     @Test
     public void testEmptyArray() {
@@ -34,10 +44,15 @@ public abstract class AbstractSearchTest {
 
     @Test
     public void testLargeArray() {
-        int[] array = new int[5000000];
+        int[] array = new int[isFast() ? 1000000 : 10000];
         for (int i = 0; i < 5; i++) {
             fillWithRandomData(array, i);
+            assertSortSucceeded(array);
         }
+    }
+
+    protected boolean isFast() {
+        return true;
     }
 
     private void fillWithRandomData(int[] array, int source) {
@@ -53,24 +68,27 @@ public abstract class AbstractSearchTest {
     private void assertSortSucceeded(int[] array) {
         int requiredBufferSize = getRequiredBufferSize();
         int[] copy = Arrays.copyOf(array, array.length + requiredBufferSize);
-        sort(new IntArrayDataWrapper(copy, 0, copy.length, copy.length, requiredBufferSize));
+        IntArrayDataWrapper data = new IntArrayDataWrapper(copy, 0, copy.length, copy.length, requiredBufferSize);
+        long startedAt = System.currentTimeMillis();
+        sort(data);
+        long endAt = System.currentTimeMillis();
+        updateMaxTime(endAt - startedAt);
         assertSorted(copy);
-        assertEqualsIgnoringOrder(array, copy);
+        assertEquals(array, copy);
+    }
+
+    private void updateMaxTime(long delay) {
+        maxTime = Math.max(maxTime, delay);
     }
 
     protected int getRequiredBufferSize() {
         return 0;
     }
 
-    private void assertEqualsIgnoringOrder(int[] a, int[] b) {
-        boolean[] flag = new boolean[a.length];
+    private void assertEquals(int[] a, int[] b) {
+        Arrays.sort(a);
         for (int i = 0; i < a.length; i++) {
-            int j = 0;
-            while (j < b.length && flag[j] && b[j] != a[j]) {
-                j++;
-            }
-            assertTrue(j < b.length);
-            flag[j] = true;
+            Assert.assertEquals(a[i], b[i]);
         }
     }
 
