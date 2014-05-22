@@ -1,7 +1,7 @@
 package com.burakovv.algorithms;
 
 public class BinarySearchTree {
-    private static final int NIL = -1;
+    public static final int NIL = -1;
 
     private final int[] parentArray;
     private final int[] leftArray;
@@ -10,6 +10,26 @@ public class BinarySearchTree {
 
     private int next = 0;
     private int root = NIL;
+
+    public static BinarySearchTree create(int[] values, int[][] childs, int root) {
+        BinarySearchTree tree = new BinarySearchTree(values.length);
+        tree.root = root;
+        tree.next = values.length;
+        for (int i = 0; i < values.length; i++) {
+            tree.values[i] = values[i];
+            int left = childs[i][0];
+            int right = childs[i][1];
+            if (left != NIL) {
+                tree.leftArray[i] = left;
+                tree.parentArray[left] = i;
+            }
+            if (right != NIL) {
+                tree.rightArray[i] = right;
+                tree.parentArray[right] = i;
+            }
+        }
+        return tree;
+    }
 
     public BinarySearchTree(int size) {
         parentArray = new int[size];
