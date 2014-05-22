@@ -1,5 +1,7 @@
 package com.burakovv.algorithms;
 
+import java.util.Arrays;
+
 public class BinarySearchTree {
     public static final int NIL = -1;
 
@@ -15,16 +17,17 @@ public class BinarySearchTree {
         BinarySearchTree tree = new BinarySearchTree(values.length);
         tree.root = root;
         tree.next = values.length;
+        Arrays.fill(tree.parentArray, NIL);
         for (int i = 0; i < values.length; i++) {
             tree.values[i] = values[i];
             int left = childs[i][0];
             int right = childs[i][1];
+            tree.leftArray[i] = left;
             if (left != NIL) {
-                tree.leftArray[i] = left;
                 tree.parentArray[left] = i;
             }
+            tree.rightArray[i] = right;
             if (right != NIL) {
-                tree.rightArray[i] = right;
                 tree.parentArray[right] = i;
             }
         }
@@ -87,7 +90,7 @@ public class BinarySearchTree {
             node = parent;
             parent = parentArray[parent];
         }
-        return node;
+        return parent;
     }
 
     public int predecessor(int node) {
@@ -100,7 +103,7 @@ public class BinarySearchTree {
             node = parent;
             parent = parentArray[parent];
         }
-        return node;
+        return parent;
     }
 
     public int insert(int value) {
@@ -146,6 +149,10 @@ public class BinarySearchTree {
             values[node] = values[y];
         }
         return y;
+    }
+
+    public int getRoot() {
+        return root;
     }
 
     public static interface Visitor {
