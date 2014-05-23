@@ -114,7 +114,7 @@ public class BinarySearchTree {
         int p = NIL;
         while (x != NIL) {
             p = x;
-            x = (values[x] < value) ? leftArray[x] : rightArray[x];
+            x = (value < values[x]) ? leftArray[x] : rightArray[x];
         }
         parentArray[node] = p;
         if (p == NIL) {
@@ -153,6 +153,10 @@ public class BinarySearchTree {
 
     public int getRoot() {
         return root;
+    }
+
+    public int getValue(int node) {
+        return values[node];
     }
 
     public static interface Visitor {
