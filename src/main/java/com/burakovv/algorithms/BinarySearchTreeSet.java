@@ -1,8 +1,10 @@
 package com.burakovv.algorithms;
 
+import com.burakovv.data.CustomSet;
+
 import java.util.Comparator;
 
-public class BinarySearchTreeSet<E> {
+public class BinarySearchTreeSet<E> implements CustomSet<E> {
     private final Comparator<E> comparator;
     private Node<E> root;
 
@@ -10,6 +12,7 @@ public class BinarySearchTreeSet<E> {
         this.comparator = comparator;
     }
 
+    @Override
     public boolean add(E value) {
         Node<E> y = null;
         Node<E> x = root;
@@ -33,6 +36,7 @@ public class BinarySearchTreeSet<E> {
         return true;
     }
 
+    @Override
     public boolean remove(Object value) {
         try {
             return removeE((E) value);
@@ -65,6 +69,7 @@ public class BinarySearchTreeSet<E> {
         return true;
     }
 
+    @Override
     public boolean contains(E value) {
         return search(value) != null;
     }

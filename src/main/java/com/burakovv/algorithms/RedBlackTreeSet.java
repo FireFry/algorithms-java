@@ -1,23 +1,26 @@
 package com.burakovv.algorithms;
 
+import com.burakovv.data.CustomSet;
+
 import java.util.Comparator;
 
-public class RedBlackTreeSet<E> {
+public class RedBlackTreeSet<E> implements CustomSet<E> {
     private static Node NIL = createNil();
 
     private static Node createNil() {
-        Node node = new Node(NIL);
+        Node node = new Node(null);
         node.color = Color.BLACK;
         return node;
     }
 
     private final Comparator<E> comparator;
-    private Node<E> root;
+    private Node<E> root = NIL;
 
     public RedBlackTreeSet(Comparator<E> comparator) {
         this.comparator = comparator;
     }
 
+    @Override
     public boolean add(E value) {
         Node<E> y = NIL;
         Node<E> x = root;
@@ -39,11 +42,11 @@ public class RedBlackTreeSet<E> {
             makeRightChild(y, newNode);
         }
         newNode.color = Color.RED;
-        insertFixup(new Node<E>(value));
+        addFixup(newNode);
         return true;
     }
 
-    private void insertFixup(Node<E> z) {
+    private void addFixup(Node<E> z) {
         while (z.parent.color == Color.RED) {
             if (z.parent == z.parent.parent.left) {
                 if (z.parent.parent.right.color == Color.RED) {
@@ -69,7 +72,7 @@ public class RedBlackTreeSet<E> {
                 } else {
                     if (z == z.parent.left) {
                         z = z.parent;
-                        leftRotate(z);
+                        rightRotate(z);
                     }
                     z.parent.color = Color.BLACK;
                     z.parent.parent.color = Color.RED;
@@ -80,6 +83,7 @@ public class RedBlackTreeSet<E> {
         root.color = Color.BLACK;
     }
 
+    @Override
     public boolean remove(Object value) {
         try {
             return removeE((E) value);
@@ -96,9 +100,7 @@ public class RedBlackTreeSet<E> {
         Node<E> y = (z.left != NIL && z.right != NIL) ? successor(z) : z;
         //y can't have both children by definition (successor can not have left child in this situation)
         Node<E> yChild = (y.left != NIL) ? y.left : y.right;
-        if (yChild != NIL) {
-            yChild.parent = y.parent;
-        }
+        yChild.parent = y.parent; //Even if yChild is NIL
         if (y.parent == NIL) {
             root = yChild;
         } else if (y.parent.left == y) {
@@ -107,11 +109,70 @@ public class RedBlackTreeSet<E> {
             y.parent.right = yChild;
         }
         if (y != z) {
-            z.copyData(y);
+            z.value = y.value;
+        }
+        if (y.color == Color.BLACK) {
+            removeFixup(yChild);
         }
         return true;
     }
 
+    private void removeFixup(Node<E> x) {
+        while (x != root && x.color == Color.BLACK) {
+            if (x == x.parent.left) {
+                Node<E> w = x.parent.right;
+                if (w.color == Color.RED) {
+                    w.color = Color.BLACK;
+                    x.parent.color = Color.RED;
+                    leftRotate(x.parent);
+                    w = x.parent.right;
+                }
+                if (w.left.color == Color.BLACK && w.right.color == Color.BLACK) {
+                    w.color = Color.RED;
+                    x = x.parent;
+                } else {
+                    if (w.right.color == Color.BLACK) {
+                        w.left.color = Color.BLACK;
+                        w.color = Color.RED;
+                        rightRotate(w);
+                        w = x.parent.right;
+                    }
+                    //w is black, w.right is red
+                    w.color = x.parent.color;
+                    x.parent.color = w.right.color = Color.BLACK;
+                    leftRotate(x.parent);
+                    x = root;
+                }
+            } else {
+                Node<E> w = x.parent.left;
+                if (w.color == Color.RED) {
+                    w.color = Color.BLACK;
+                    x.parent.color = Color.RED;
+                    rightRotate(x.parent);
+                    w = x.parent.left;
+                }
+                if (w.right.color == Color.BLACK && w.left.color == Color.BLACK) {
+                    w.color = Color.RED;
+                    x = x.parent;
+                } else {
+                    if (w.left.color == Color.BLACK) {
+                        w.right.color = Color.BLACK;
+                        w.color = Color.RED;
+                        leftRotate(w);
+                        w = x.parent.left;
+                    }
+                    //w is black, w.left is red
+                    w.color = x.parent.color;
+                    x.parent.color = w.left.color = Color.BLACK;
+                    rightRotate(x.parent);
+                    x = root;
+                }
+            }
+        }
+        x.color = Color.BLACK;
+    }
+
+    @Override
     public boolean contains(E value) {
         return search(value) != NIL;
     }
@@ -208,6 +269,49 @@ public class RedBlackTreeSet<E> {
         y.parent = x;
     }
 
+    public void assertCorresct() {
+        if (root.color == Color.RED) {
+            throw new RuntimeException("The root is red");
+        }
+        findBlacks(root, 0);
+    }
+
+    private int findBlacks(Node<E> node, int current) {
+        if (node.color == Color.BLACK) {
+            current++;
+        }
+        if (node == NIL) {
+            return current;
+        }
+        if (node.color == Color.RED && (node.left.color == Color.RED || node.right.color == Color.RED)) {
+            throw new RuntimeException("Red has red child");
+        }
+        int leftBlacks = findBlacks(node.left, current);
+        int rightBlacks = findBlacks(node.right, current);
+        if (leftBlacks != rightBlacks) {
+            throw new RuntimeException("Tree is not balanced");
+        }
+        return leftBlacks;
+    }
+
+    public boolean isBalanced() {
+        int minWay = minWayLength(root, 0);
+        int maxWay = maxWayLength(root, 0);
+        return 2 * minWay >= maxWay;
+    }
+
+    private int minWayLength(Node<E> node, int current) {
+        return node == NIL ? current : Math.min(
+                minWayLength(node.left, current + 1),
+                minWayLength(node.right, current + 1));
+    }
+
+    private int maxWayLength(Node<E> node, int current) {
+        return node == NIL ? current : Math.max(
+                maxWayLength(node.left, current + 1),
+                maxWayLength(node.right, current + 1));
+    }
+
     static final class Node<T> {
         T value;
         Node<T> left = NIL;
@@ -217,11 +321,6 @@ public class RedBlackTreeSet<E> {
 
         public Node(T value) {
             this.value = value;
-        }
-
-        public void copyData(Node<T> other) {
-            value = other.value;
-            color = other.color;
         }
     }
 
