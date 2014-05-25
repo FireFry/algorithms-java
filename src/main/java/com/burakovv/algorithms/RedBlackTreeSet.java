@@ -5,7 +5,7 @@ import com.burakovv.data.CustomSet;
 import java.util.Comparator;
 
 public class RedBlackTreeSet<E> implements CustomSet<E> {
-    private static Node NIL = createNil();
+    static Node NIL = createNil();
 
     private static Node createNil() {
         Node node = new Node(null);
@@ -14,7 +14,7 @@ public class RedBlackTreeSet<E> implements CustomSet<E> {
     }
 
     private final Comparator<E> comparator;
-    private Node<E> root = NIL;
+    Node<E> root = NIL;
 
     public RedBlackTreeSet(Comparator<E> comparator) {
         this.comparator = comparator;
@@ -267,49 +267,6 @@ public class RedBlackTreeSet<E> implements CustomSet<E> {
             y.parent.right = x;
         }
         y.parent = x;
-    }
-
-    public void assertCorresct() {
-        if (root.color == Color.RED) {
-            throw new RuntimeException("The root is red");
-        }
-        findBlacks(root, 0);
-    }
-
-    private int findBlacks(Node<E> node, int current) {
-        if (node.color == Color.BLACK) {
-            current++;
-        }
-        if (node == NIL) {
-            return current;
-        }
-        if (node.color == Color.RED && (node.left.color == Color.RED || node.right.color == Color.RED)) {
-            throw new RuntimeException("Red has red child");
-        }
-        int leftBlacks = findBlacks(node.left, current);
-        int rightBlacks = findBlacks(node.right, current);
-        if (leftBlacks != rightBlacks) {
-            throw new RuntimeException("Tree is not balanced");
-        }
-        return leftBlacks;
-    }
-
-    public boolean isBalanced() {
-        int minWay = minWayLength(root, 0);
-        int maxWay = maxWayLength(root, 0);
-        return 2 * minWay >= maxWay;
-    }
-
-    private int minWayLength(Node<E> node, int current) {
-        return node == NIL ? current : Math.min(
-                minWayLength(node.left, current + 1),
-                minWayLength(node.right, current + 1));
-    }
-
-    private int maxWayLength(Node<E> node, int current) {
-        return node == NIL ? current : Math.max(
-                maxWayLength(node.left, current + 1),
-                maxWayLength(node.right, current + 1));
     }
 
     static final class Node<T> {
