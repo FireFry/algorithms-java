@@ -13,7 +13,7 @@ TODO list:
 6. ~~Radix sort~~
 7. Hash table
 8. ~~Binary search tree~~
-9. Red-black tree
+9. ~~Red-black tree~~
 10. Order-statistic tree
 11. Segment tree
 12. K-D tree
