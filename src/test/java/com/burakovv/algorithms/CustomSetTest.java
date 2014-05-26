@@ -19,6 +19,10 @@ public abstract class CustomSetTest {
         return 40000;
     }
 
+    protected int getRandomRange() {
+        return 100000;
+    }
+
     @Test
     public void testRandom() {
         doTest(new Provider() {
@@ -26,7 +30,7 @@ public abstract class CustomSetTest {
 
             @Override
             public int nextValue() {
-                return random.nextInt(100000);
+                return random.nextInt(getRandomRange());
             }
 
             @Override

@@ -35,6 +35,11 @@ public class RedBlackTreeSetTest extends CustomSetTest {
         return IS_SPEED_TEST ? 5000000 : 50000;
     }
 
+    @Override
+    protected int getRandomRange() {
+        return IS_SPEED_TEST ? 100000 : 1000;
+    }
+
     public static void assertCorresct(RedBlackTreeSet set) {
         if (set.root.color == RedBlackTreeSet.Color.RED) {
             throw new RuntimeException("The root is red");

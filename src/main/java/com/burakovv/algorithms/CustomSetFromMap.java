@@ -7,7 +7,7 @@ public class CustomSetFromMap<E> implements CustomSet<E> {
     private static final Object PRESENT = new Object();
     protected final CustomMap<E, Object> map;
 
-    public CustomSetFromMap(BinarySearchTreeMap<E, Object> map) {
+    public CustomSetFromMap(CustomMap<E, Object> map) {
         this.map = map;
     }
 
@@ -21,5 +21,9 @@ public class CustomSetFromMap<E> implements CustomSet<E> {
 
     public boolean contains(E value) {
         return map.get(value) == PRESENT;
+    }
+
+    public CustomMap<E, Object> getMap() {
+        return map;
     }
 }

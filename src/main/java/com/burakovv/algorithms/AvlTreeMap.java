@@ -4,15 +4,15 @@ import com.burakovv.data.CustomMap;
 
 import java.util.Comparator;
 
-public class BinarySearchTreeMap<K, V> implements CustomMap<K, V> {
+public class AvlTreeMap<K, V> implements CustomMap<K, V> {
     private final Comparator<K> comparator;
-    private Node<K, V> root;
+    Node<K, V> root;
 
-    public BinarySearchTreeMap() {
+    public AvlTreeMap() {
         this.comparator = null;
     }
 
-    public BinarySearchTreeMap(Comparator<K> comparator) {
+    public AvlTreeMap(Comparator<K> comparator) {
         this.comparator = comparator;
     }
 
@@ -39,7 +39,38 @@ public class BinarySearchTreeMap<K, V> implements CustomMap<K, V> {
         } else {
             makeRightChild(y, newNode);
         }
+        balance(newNode);
         return null;
+    }
+
+    protected void balance(Node node) {
+        while (node != null) {
+            updateHeight(node);
+            int nodeFactor = factor(node);
+            if (nodeFactor == 2) {
+                if (factor(node.left) == -1) {
+                    leftRotate(node.left);
+                }
+                rightRotate(node);
+                node = node.parent.parent;
+            } else if (nodeFactor == -2) {
+                if (factor(node.right) == 1) {
+                    rightRotate(node.right);
+                }
+                leftRotate(node);
+                node = node.parent.parent;
+            } else {
+                node = node.parent;
+            }
+        }
+    }
+
+    private int factor(Node node) {
+        return heightOf(node.left) - heightOf(node.right);
+    }
+
+    private static int heightOf(Node node) {
+        return node == null ? 0 : node.height;
     }
 
     protected int compare(K a, K b) {
@@ -81,6 +112,7 @@ public class BinarySearchTreeMap<K, V> implements CustomMap<K, V> {
             z.key = y.key;
             z.value = y.value;
         }
+        balance(y.parent);
         return result;
     }
 
@@ -150,12 +182,57 @@ public class BinarySearchTreeMap<K, V> implements CustomMap<K, V> {
         rightChild.parent = parent;
     }
 
+    private void leftRotate(Node x) {
+        Node y = x.right;
+        x.right = y.left;
+        if (y.left != null) {
+            y.left.parent = x;
+        }
+        y.parent = x.parent;
+        if (x.parent == null) {
+            root = y;
+        } else if (x.parent.left == x) {
+            x.parent.left = y;
+        } else {
+            x.parent.right = y;
+        }
+        x.parent = y;
+        y.left = x;
+        updateHeight(x);
+        updateHeight(y);
+    }
+
+    private void rightRotate(Node y) {
+        Node x = y.left;
+        y.left = x.right;
+        if (y.left != null) {
+            y.left.parent = y;
+        }
+        x.right = y;
+        x.parent = y.parent;
+        if (y.parent == null) {
+            root = x;
+        } else if (y.parent.left == y) {
+            y.parent.left = x;
+        } else {
+            y.parent.right = x;
+        }
+        y.parent = x;
+        updateHeight(y);
+        updateHeight(x);
+    }
+
+    private void updateHeight(Node node) {
+        node.height = 1 + Math.max(heightOf(node.left), heightOf(node.right));
+    }
+
     static final class Node<T, V> {
         Node<T, V> left;
         Node<T, V> right;
         Node<T, V> parent;
         T key;
         V value;
+        int height;
 
         public Node(T key, V value) {
             this.key = key;
