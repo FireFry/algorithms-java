@@ -1,31 +1,37 @@
 package com.burakovv.algorithms;
 
-import com.burakovv.data.CustomSet;
+import com.burakovv.data.CustomMap;
 
 import java.util.Comparator;
 
-public class BinarySearchTreeSet<E> implements CustomSet<E> {
-    private final Comparator<E> comparator;
-    private Node<E> root;
+public class BinarySearchTreeMap<K, V> implements CustomMap<K, V> {
+    private final Comparator<K> comparator;
+    private Node<K, V> root;
 
-    public BinarySearchTreeSet(Comparator<E> comparator) {
+    public BinarySearchTreeMap() {
+        this.comparator = null;
+    }
+
+    public BinarySearchTreeMap(Comparator<K> comparator) {
         this.comparator = comparator;
     }
 
     @Override
-    public boolean add(E value) {
-        Node<E> y = null;
-        Node<E> x = root;
+    public V put(K key, V value) {
+        Node<K, V> y = null;
+        Node<K, V> x = root;
         int lastComparisonResult = -1;
         while (x != null) {
             y = x;
-            lastComparisonResult = comparator.compare(value, x.value);
+            lastComparisonResult = compare(key, x.key);
             if (lastComparisonResult == 0) {
-                return false;
+                V result = x.value;
+                x.value = value;
+                return result;
             }
             x = lastComparisonResult < 0 ? x.left : x.right;
         }
-        Node<E> newNode = new Node<E>(value);
+        Node<K, V> newNode = new Node<K, V>(key, value);
         if (y == null) {
             root = newNode;
         } else if (lastComparisonResult < 0) {
@@ -33,26 +39,34 @@ public class BinarySearchTreeSet<E> implements CustomSet<E> {
         } else {
             makeRightChild(y, newNode);
         }
-        return true;
+        return null;
+    }
+
+    protected int compare(K a, K b) {
+        if (comparator != null) {
+            return comparator.compare(a, b);
+        }
+        return ((Comparable) a).compareTo(b);
     }
 
     @Override
-    public boolean remove(Object value) {
+    public V remove(Object key) {
         try {
-            return removeE((E) value);
+            return removeK((K) key);
         } catch (ClassCastException e) {
-            return false;
+            return null;
         }
     }
 
-    private boolean removeE(E value) {
-        Node<E> z = search(value);
+    private V removeK(K key) {
+        Node<K, V> z = search(key);
         if (z == null) {
-            return false;
+            return null;
         }
-        Node<E> y = (z.left != null && z.right != null) ? successor(z) : z;
+        V result = z.value;
+        Node<K, V> y = (z.left != null && z.right != null) ? successor(z) : z;
         //y can't have both children by definition (successor can not have left child in this situation)
-        Node<E> yChild = (y.left != null) ? y.left : y.right;
+        Node<K, V> yChild = (y.left != null) ? y.left : y.right;
         if (yChild != null) {
             yChild.parent = y.parent;
         }
@@ -64,20 +78,25 @@ public class BinarySearchTreeSet<E> implements CustomSet<E> {
             y.parent.right = yChild;
         }
         if (y != z) {
-            z.value = y.value;
+            z.key = y.key;
         }
-        return true;
+        return result;
     }
 
     @Override
-    public boolean contains(E value) {
-        return search(value) != null;
+    public V get(Object key) {
+        try {
+            Node<K, V> node = search((K) key);
+            return node == null ? null : node.value;
+        } catch (ClassCastException e) {
+            return null;
+        }
     }
 
-    private Node<E> search(E value) {
-        Node<E> node = root;
+    private Node<K, V> search(K key) {
+        Node<K, V> node = root;
         while (node != null) {
-            int compareResult = comparator.compare(value, node.value);
+            int compareResult = compare(key, node.key);
             if (compareResult == 0) {
                 return node;
             } else if (compareResult < 0) {
@@ -89,11 +108,11 @@ public class BinarySearchTreeSet<E> implements CustomSet<E> {
         return null;
     }
 
-    private Node<E> successor(Node<E> node) {
+    private Node<K, V> successor(Node<K, V> node) {
         if (node.right != null) {
             return min(node.right);
         }
-        Node<E> parent = node.parent;
+        Node<K, V> parent = node.parent;
         while (parent != null && parent.right == node) {
             node = parent;
             parent = parent.parent;
@@ -101,14 +120,14 @@ public class BinarySearchTreeSet<E> implements CustomSet<E> {
         return parent;
     }
 
-    private Node<E> min(Node<E> node) {
+    private Node<K, V> min(Node<K, V> node) {
         while (node.left != null) {
             node = node.left;
         }
         return node;
     }
 
-    private static <T> void makeLeftChild(Node<T> parent, Node<T> leftChild) {
+    private static <T, V> void makeLeftChild(Node<T, V> parent, Node<T, V> leftChild) {
         if (parent.left != null) {
             throw new IllegalArgumentException("Parent already has left child");
         }
@@ -119,7 +138,7 @@ public class BinarySearchTreeSet<E> implements CustomSet<E> {
         leftChild.parent = parent;
     }
 
-    private static <T> void makeRightChild(Node<T> parent, Node<T> rightChild) {
+    private static <T, V> void makeRightChild(Node<T, V> parent, Node<T, V> rightChild) {
         if (parent.right != null) {
             throw new IllegalArgumentException("Parent already has right child");
         }
@@ -130,13 +149,15 @@ public class BinarySearchTreeSet<E> implements CustomSet<E> {
         rightChild.parent = parent;
     }
 
-    static final class Node<T> {
-        T value;
-        Node<T> left;
-        Node<T> right;
-        Node<T> parent;
+    static final class Node<T, V> {
+        Node<T, V> left;
+        Node<T, V> right;
+        Node<T, V> parent;
+        T key;
+        V value;
 
-        public Node(T value) {
+        public Node(T key, V value) {
+            this.key = key;
             this.value = value;
         }
     }

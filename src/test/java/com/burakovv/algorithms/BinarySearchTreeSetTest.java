@@ -8,7 +8,7 @@ public class BinarySearchTreeSetTest extends CustomSetTest {
 
     @Override
     protected <T> CustomSet<T> createCustomSet(Comparator<T> comparator) {
-        return new BinarySearchTreeSet<T>(comparator);
+        return new CustomSetFromMap<T>(new BinarySearchTreeMap<T, Object>(comparator));
     }
 
 }
