@@ -9,7 +9,7 @@ import java.util.Random;
 
 public class SparseTableRMQTest extends TestCase {
 
-    private static final TestFunction LCD_FUNCTION = new TestFunction() {
+    private static final TestFunction GCD_FUNCTION = new TestFunction() {
         @Override
         public int func(int a, int b) {
             return (b == 0) ? a : func(b, a % b);
@@ -46,14 +46,14 @@ public class SparseTableRMQTest extends TestCase {
 
     @Test
     public void testCorrectness() {
-        testLargeData(10000, 10000, true, LCD_FUNCTION);
+        testLargeData(10000, 10000, true, GCD_FUNCTION);
         testLargeData(10000, 10000, true, MAX_FUNCTION);
         testLargeData(10000, 10000, true, MIN_FUNCTION);
     }
 
     @Test(timeout = 5000)
     public void testSpeed() {
-        testLargeData(100000, 1000000, false, LCD_FUNCTION);
+        testLargeData(100000, 1000000, false, GCD_FUNCTION);
         testLargeData(100000, 1000000, false, MAX_FUNCTION);
         testLargeData(100000, 1000000, false, MIN_FUNCTION);
     }

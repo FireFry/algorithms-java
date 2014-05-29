@@ -3,6 +3,9 @@ package com.burakovv.algorithms;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Allows to perform function on range of predefined sequence of elements by the time of O(1) (and O(n * log(n)) preprocessing time)
+ */
 public class SparseTableRMQ<E> {
     private final Function<E> function;
     private final E[][] a;
