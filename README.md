@@ -18,7 +18,7 @@ TODO list:
 11. Segment tree
 12. K-D tree
 13. ~~AVL-tree~~
-14. Range Minimum Query (Sparse Table)
+14. ~~Range Minimum Query (Sparse Table)~~
 15. Range Minimum Query (Segment Tree)
 16. Huffman coding
 17. B-tree
