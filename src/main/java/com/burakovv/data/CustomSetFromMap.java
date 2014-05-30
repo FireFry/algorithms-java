@@ -1,4 +1,4 @@
-package com.burakovv.algorithms;
+package com.burakovv.data;
 
 import com.burakovv.data.CustomMap;
 import com.burakovv.data.CustomSet;

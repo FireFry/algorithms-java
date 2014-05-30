@@ -1,6 +1,7 @@
 package com.burakovv.algorithms;
 
 import com.burakovv.data.CustomSet;
+import com.burakovv.data.CustomSetFromMap;
 import org.junit.Assert;
 
 import java.util.Comparator;
