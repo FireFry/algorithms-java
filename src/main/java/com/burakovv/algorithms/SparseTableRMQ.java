@@ -44,7 +44,7 @@ public class SparseTableRMQ<E> {
         return total;
     }
 
-    public E select(int left, int right) {
+    public E composeRange(int left, int right) {
         int diff = right - left + 1;
         int i = 0;
         int d = 1;

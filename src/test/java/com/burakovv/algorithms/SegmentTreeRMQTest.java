@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class SparseTableRMQTest extends TestCase {
+public class SegmentTreeRMQTest extends TestCase {
 
     private static final TestFunction GCD_FUNCTION = new TestFunction() {
         @Override
@@ -32,16 +32,24 @@ public class SparseTableRMQTest extends TestCase {
 
     @Test
     public void test() {
-        SparseTableRMQ<Integer> table = SparseTableRMQ.newBuilder(MAX_FUNCTION.createRMQFunction()).add(1, 3, 2, 6, 2, 1, 5, 3).build();
-        assertEquals(1, table.composeRange(0, 0).intValue());
-        assertEquals(3, table.composeRange(0, 1).intValue());
-        assertEquals(2, table.composeRange(2, 2).intValue());
-        assertEquals(6, table.composeRange(3, 5).intValue());
-        assertEquals(3, table.composeRange(1, 2).intValue());
-        assertEquals(5, table.composeRange(4, 7).intValue());
-        assertEquals(5, table.composeRange(4, 6).intValue());
-        assertEquals(2, table.composeRange(4, 5).intValue());
-        assertEquals(3, table.composeRange(7, 7).intValue());
+        SegmentTreeRMQ<Integer> segmentTree = new SegmentTreeRMQ<Integer>(MAX_FUNCTION.createRMQFunction(), 8);
+        segmentTree.set(0, 1);
+        segmentTree.set(1, 3);
+        segmentTree.set(2, 2);
+        segmentTree.set(3, 6);
+        segmentTree.set(4, 2);
+        segmentTree.set(5, 1);
+        segmentTree.set(6, 5);
+        segmentTree.set(7, 3);
+        assertEquals(1, segmentTree.composeRange(0, 0).intValue());
+        assertEquals(3, segmentTree.composeRange(0, 1).intValue());
+        assertEquals(2, segmentTree.composeRange(2, 2).intValue());
+        assertEquals(6, segmentTree.composeRange(3, 5).intValue());
+        assertEquals(3, segmentTree.composeRange(1, 2).intValue());
+        assertEquals(5, segmentTree.composeRange(4, 7).intValue());
+        assertEquals(5, segmentTree.composeRange(4, 6).intValue());
+        assertEquals(2, segmentTree.composeRange(4, 5).intValue());
+        assertEquals(3, segmentTree.composeRange(7, 7).intValue());
     }
 
     @Test
@@ -59,16 +67,21 @@ public class SparseTableRMQTest extends TestCase {
     }
 
     public void testLargeData(int size, int iterations, boolean checkCorrectness, TestFunction function) {
-        SparseTableRMQ.Builder<Integer> builder = SparseTableRMQ.newBuilder(function.createRMQFunction());
         Random random = new Random(315926);
+        SegmentTreeRMQ<Integer> table = new SegmentTreeRMQ<Integer>(function.createRMQFunction(), size);
         ArrayList<Integer> list = new ArrayList<Integer>(size);
         for (int i = 0; i < size; i++) {
             int value = random.nextInt(Integer.MAX_VALUE);
-            builder.add(value);
+            table.set(i, value);
             list.add(value);
         }
-        SparseTableRMQ<Integer> table = builder.build();
         for (int i = 0; i < iterations; i++) {
+
+            int index = random.nextInt(size);
+            int value = random.nextInt(Integer.MAX_VALUE);
+            table.set(index, value);
+            list.set(index, value);
+
             int left = random.nextInt(size);
             int right = left + random.nextInt(size - left);
             Integer select = table.composeRange(left, right);
@@ -81,10 +94,10 @@ public class SparseTableRMQTest extends TestCase {
     }
 
     private static abstract class TestFunction {
-        public SparseTableRMQ.Function<Integer> createRMQFunction() {
-            return new SparseTableRMQ.Function<Integer>() {
+        public SegmentTreeRMQ.Composer<Integer> createRMQFunction() {
+            return new SegmentTreeRMQ.Composer<Integer>() {
                 @Override
-                public Integer combine(Integer a, Integer b) {
+                public Integer compose(Integer a, Integer b) {
                     return func(a, b);
                 }
             };
@@ -95,7 +108,11 @@ public class SparseTableRMQTest extends TestCase {
                 return list.get(left);
             }
             int middle = (left + right) / 2;
-            return func(composeRange(list, left, middle), composeRange(list, middle + 1, right));
+            return funcOrNull(composeRange(list, left, middle), composeRange(list, middle + 1, right));
+        }
+
+        private Integer funcOrNull(Integer a, Integer b) {
+            return (a == null || b == null) ? null : func(a, b);
         }
 
         abstract int func(int select, int select1);
