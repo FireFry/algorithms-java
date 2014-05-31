@@ -24,8 +24,8 @@ TODO list:
 17. B-tree
 18. Bimonial tree
 19. Disjoint-set data structure
-20. BFS
-21. DFS
+20. ~~BFS~~
+21. ~~DFS~~
 22. Strongly connected components
 23. Minimum spanning-tree problem (Kruskal and Prim)
 24. Bellman-Ford
